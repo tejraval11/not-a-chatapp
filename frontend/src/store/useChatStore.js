@@ -7,6 +7,7 @@ export const useChatStore = create((set, get) => ({
   allContacts: [],
   chats: [],
   messages: [],
+  typingByUserId: {},
   activeTab: "chats",
   selectedUser: null,
   isUsersLoading: false,
@@ -109,5 +110,19 @@ export const useChatStore = create((set, get) => ({
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
     socket.off("newMessage");
+  },
+
+  subscribeToTyping: () => {
+    const { selectedUser } = get();
+    if (!selectedUser) return;
+    const socket = useAuthStore.getState().socket;
+    socket.on("userTyping", ({ senderId, isTyping }) => {
+      set((state) => ({ typingByUserId: { ...state.typingByUserId, [senderId]: isTyping } }));
+    });
+  },
+
+  unsubscribeFromTyping: () => {
+    const socket = useAuthStore.getState().socket;
+    socket.off("userTyping");
   },
 }));

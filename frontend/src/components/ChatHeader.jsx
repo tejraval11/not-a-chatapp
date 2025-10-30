@@ -5,8 +5,10 @@ import { useAuthStore } from "../store/useAuthStore";
 
 function ChatHeader() {
   const { selectedUser, setSelectedUser } = useChatStore();
+  const { typingByUserId } = useChatStore();
   const { onlineUsers } = useAuthStore();
   const isOnline = onlineUsers.includes(selectedUser._id);
+  const isTyping = Boolean(typingByUserId[selectedUser._id]);
 
   useEffect(() => {
     const handleEscKey = (event) => {
@@ -33,7 +35,7 @@ function ChatHeader() {
 
         <div>
           <h3 className="text-slate-200 font-medium truncate max-w-[40vw] md:max-w-none">{selectedUser.fullName}</h3>
-          <p className="text-slate-400 text-sm">{isOnline ? "Online" : "Offline"}</p>
+          <p className="text-slate-400 text-sm">{isTyping ? "Typing..." : isOnline ? "Online" : "Offline"}</p>
         </div>
       </div>
 

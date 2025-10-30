@@ -13,6 +13,22 @@ function ChatPage() {
 
   return (
     <div className="relative w-full h-[100dvh] md:h-[800px] max-w-6xl mx-auto">
+      {/* Mobile full-screen chat overlay */}
+      {selectedUser && (
+        <div className="fixed inset-0 z-20 bg-slate-900 md:hidden">
+          <div className="flex flex-col h-full">
+            {/* Back button for mobile */}
+            <div className="md:hidden flex items-center px-4 py-2 border-b border-slate-700">
+              <button onClick={() => setSelectedUser(null)} className="text-sm">
+                ← Back
+              </button>
+              <span className="mx-auto font-medium">{selectedUser.fullName}</span>
+            </div>
+            <ChatContainer />
+          </div>
+        </div>
+      )}
+
       <BorderAnimatedContainer>
         <div className="flex h-full w-full overflow-hidden">
           
@@ -36,7 +52,7 @@ function ChatPage() {
           <div
             className={`
               flex-1 bg-slate-900/50 backdrop-blur-sm flex flex-col
-              ${!selectedUser ? "hidden md:flex" : "flex"}
+              ${!selectedUser ? "hidden md:flex" : "hidden md:flex"}
             `}
           >
             {/* Back button for mobile */}
