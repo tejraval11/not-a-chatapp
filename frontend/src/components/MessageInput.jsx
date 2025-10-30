@@ -3,7 +3,6 @@ import useKeyboardSound from "../hooks/useKeyboardSound";
 import { useChatStore } from "../store/useChatStore";
 import toast from "react-hot-toast";
 import { ImageIcon, SendIcon, XIcon } from "lucide-react";
-import { useAuthStore } from "../store/useAuthStore";
 
 function MessageInput() {
   const { playRandomKeyStrokeSound } = useKeyboardSound();
@@ -12,9 +11,7 @@ function MessageInput() {
 
   const fileInputRef = useRef(null);
 
-  const { sendMessage, isSoundEnabled, selectedUser } = useChatStore();
-  const { socket } = useAuthStore();
-  const typingTimeoutRef = useRef(null);
+  const { sendMessage, isSoundEnabled } = useChatStore();
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -28,8 +25,6 @@ function MessageInput() {
     setText("");
     setImagePreview("");
     if (fileInputRef.current) fileInputRef.current.value = "";
-    // stop typing after sending
-    if (socket && selectedUser) socket.emit("stopTyping", { receiverId: selectedUser._id });
   };
 
   const handleImageChange = (e) => {
@@ -77,13 +72,6 @@ function MessageInput() {
           onChange={(e) => {
             setText(e.target.value);
             isSoundEnabled && playRandomKeyStrokeSound();
-            if (socket && selectedUser) {
-              socket.emit("typing", { receiverId: selectedUser._id });
-              if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-              typingTimeoutRef.current = setTimeout(() => {
-                socket.emit("stopTyping", { receiverId: selectedUser._id });
-              }, 1200);
-            }
           }}
           className="flex-1 min-w-0 bg-slate-800/50 border border-slate-700/50 rounded-lg py-2 px-4"
           placeholder="Type your message..."
